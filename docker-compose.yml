@@ -1,0 +1,32 @@
+flaskapp:
+  image: flask:latest
+  links:
+    - mysql:mysql
+  volumes:
+    - ./site:/usr/src/site
+    - ~/Dropbox/Project/site:/usr/webapp
+  expose:
+    - "3031"
+    - "3032"
+  command: uwsgi --emperor /usr/src/site
+nginx:
+  image: nginx:latest
+  links:
+    - flaskapp:uwsgi
+  ports:
+    - "80:80"
+    - "8080:8080"
+  volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+mysql:
+  image: mysql:latest
+  environment:
+    - MYSQL_ROOT_PASSWORD=0
+  ports:
+   - "3306:3306"
+redis:
+  image: redis:latest
+  environment:
+    - REDIS_PASS=**None**
+  ports:
+    - "6379:6379"
